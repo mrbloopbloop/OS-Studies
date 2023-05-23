@@ -33,6 +33,7 @@ start:
 puts:
 	push 	SI													; Push registers to the stack.
 	push 	AX
+	mov 	AH, 0x0E											; Display char
 
 .loop:
 	lodsb														; Load string int AL register.
