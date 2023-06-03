@@ -14,11 +14,7 @@ nop
 
 %include "src/bootloader/FAT12_HEADER.asm"
 
-; --------------------------------------------------------------
-; Other functions
-; --------------------------------------------------------------
 
-%include "src/bootloader/puts.asm"                              ; puts function prints a string.
 
 ; --------------------------------------------------------------
 ; Code begin
@@ -27,7 +23,12 @@ nop
 start:
 	jmp 	main
 
+; --------------------------------------------------------------
+; Other functions
+; --------------------------------------------------------------
 
+%include "src/bootloader/puts.asm"                              ; puts function prints a string.
+%include "src/bootloader/print_hex.asm"							; prints value in AX as a hex value.
 
 ; --------------------------------------------------------------
 ; Main Execution
@@ -47,14 +48,18 @@ main:
     ; BIOS should set DL to drive number
     mov 	[ebr_drive_number], DL
 
-    mov 	AX, 1                                               ; LBA=1, second sector from disk
-    mov 	CL, 1                                               ; 1 sector to read
-    mov 	BX, 0x7E00                                          ; data should be after the bootloader
-    call 	disk_read
+    ; mov 	AX, 1                                               ; LBA=1, second sector from disk
+    ; mov 	CL, 1                                               ; 1 sector to read
+    ; mov 	BX, 0x7E00                                          ; data should be after the bootloader
+    ; call 	disk_read
 	
 	; print message
 	mov 	SI, msg_hello
 	call 	puts
+	push	AX
+	mov 	AX, 0xFAB0
+	call 	print_hex
+	pop		AX
 	cli															; Disable interrupts to aid halting.
 
 .halt:
@@ -87,7 +92,7 @@ wait_key_and_reboot:
 ; Disk Routines
 ; --------------------------------------------------------------
 
-%include "src/bootloader/disk_routines.asm"
+;%include "src/bootloader/disk_routines.asm"
 
 
 ; --------------------------------------------------------------
